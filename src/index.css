@@ -33,7 +33,8 @@ body {
 
 input.custom-input {
     border: 1px solid lightgray;
-    padding: 4px;
+    padding: 8px;
+    transition: all .2s ease;
     
     &.submit-side:not([type=submit]) {
         border-radius: 6px 0px 0px 6px;

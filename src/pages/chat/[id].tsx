@@ -45,7 +45,7 @@ export function Chat() {
         navigate("/chat");
 
     return <div>
-        <div>
+        <div class="pb-14 max-h-[calc(90dvh_-_1px)] overflow-auto">
             <For each={chats()[i()].chatHistory} children={Bubble} />
         </div>
         <div class="absolute bottom-0 w-[80%] flex justify-center">
@@ -54,12 +54,12 @@ export function Chat() {
                     value={content()}
                     onChange={ev => setContent(ev.target.value)}
                     placeholder="Write your message"
-                    class="custom-input submit-side w-[90%]"
+                    class="custom-input submit-side w-[90%] shadow-xl"
                     disabled={!chats()[i()].isConnected}
                 />
                 <input type="submit"
                     value="send"
-                    class="custom-input submit-side w-[10%]"
+                    class="custom-input submit-side w-[10%] shadow-xl"
                     disabled={!chats()[i()].isConnected}
                 />
             </form>
