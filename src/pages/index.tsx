@@ -1,3 +1,6 @@
 export function Index() {
-    return <p>Hello</p>
+    return <div>
+        <p>Hi</p>
+        <a href="/chat">Go chat</a>
+    </div>
 }
