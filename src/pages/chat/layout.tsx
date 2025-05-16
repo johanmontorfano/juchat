@@ -35,7 +35,7 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         </div>
         <div>
             <div class="flex w-full h-[4dvh] border-b justify-center items-center">
-                <Show when={chatI() > -1} fallback="New chat">
+                <Show when={chatI() > -1} fallback="Unnamed chat">
                     <p class="cursor-pointer"
                         onClick={() => setProfileOpen(true)}
                     >
