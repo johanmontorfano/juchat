@@ -1,5 +1,5 @@
 import { RouteSectionProps, useNavigate, useParams } from "@solidjs/router";
-import { IoAddOutline, IoClose } from "solid-icons/io";
+import { IoAddOutline, IoChatbubblesOutline, IoClose } from "solid-icons/io";
 import { createEffect, createSignal, Index, Show } from "solid-js";
 import { Popup } from "../../component/popup";
 import { saveChat } from "../../p2p/chats";
@@ -57,6 +57,15 @@ function NewChat() {
     </>
 }
 
+function NoChatTip() {
+    return <div class="w-[calc(100%_-_3rem] h-full flex items-center justify-center m-6">
+        <IoChatbubblesOutline size={48} color="gray" />
+        <p class="text-center text-[gray]">
+            It's too empty here, find someone to chat with
+        </p>
+    </div>
+}
+
 export function ChatLayout(props: RouteSectionProps<unknown>) {
     const [chatI, setChatI] = createSignal(-1);
     const [profileOpen, setProfileOpen] = createSignal(false);
@@ -98,7 +107,9 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         <Show when={(params.id && showAll()) || !params.id}>
             <div class="border-r w-full flex flex-col relative">
                 <NewChat />
-                <Index each={chats()}>{(_, i) => <ChatEntry id={i} />}</Index>
+                <Index each={chats()} fallback={NoChatTip}>
+                    {(_, i) => <ChatEntry id={i} />}
+                </Index>
             </div>
         </Show>
         <Show when={(!params.id && showAll()) || params.id}>
