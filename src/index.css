@@ -30,3 +30,19 @@ body {
     min-width: 500px;
     border-radius: 5px;
 }
+
+input.custom-input {
+    border: 1px solid lightgray;
+    padding: 4px;
+    
+    &.submit-side:not([type=submit]) {
+        border-radius: 6px 0px 0px 6px;
+    }
+    &.submit-side[type=submit] {
+        border-left: 0px;
+        border-radius: 0px 6px 6px 0px;
+        background-color: blue;
+        color: white;
+        cursor: pointer;
+    }
+}

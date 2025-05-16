@@ -1,8 +1,9 @@
 import { RouteSectionProps, useParams } from "@solidjs/router";
-import { createEffect, createSignal, For, Index, Show } from "solid-js";
+import { IoAddOutline } from "solid-icons/io";
+import { createEffect, createSignal, Index, Show } from "solid-js";
 import { Popup } from "../../component/popup";
 import { saveChat } from "../../p2p/chats";
-import { chats, setChats } from "../../p2p/local";
+import { chats, onConnection, peer, setChats } from "../../p2p/local";
 
 /// A separate component for chat entries allows to not loose reactivity
 /// when dealing with changes in the chat name/last chat.
@@ -17,6 +18,45 @@ function ChatEntry(props: {id: number}) {
     </a>
 }
 
+function NewChat() {
+    const [show, setShow] = createSignal(false);
+    const [targetId, setTargetId] = createSignal("");
+
+    function onSubmit(ev: SubmitEvent) {
+        ev.preventDefault();
+        onConnection(peer.connect(targetId()));
+    }
+
+    return <>
+        <div class="cursor-pointer bg-[blue] p-[12px] rounded-[24px] flex items-center absolute bottom-[10px] right-[10px]"
+            onClick={() => setShow(true)}
+        >
+            <IoAddOutline size={24} color="white" />
+            <p class="text-white">New Chat</p>
+        </div>
+        <Popup show={show()} onClose={() => setShow(false)}>
+            <p class="text-2xl text-center">Create a new chat with someone</p>
+            <p class="p-4">
+                Copy the identifier of this person in the box below to
+                initiate a connection
+            </p>
+            <form onSubmit={onSubmit} class="p-4">
+                <input type="text"
+                    name="id"
+                    value={targetId()}
+                    onChange={ev => setTargetId(ev.target.value)}
+                    class="custom-input submit-side w-[80%]"
+                    placeholder="Enter the ID here"
+                />
+                <input type="submit"
+                    value="Connect"
+                    class="custom-input submit-side w-[20%]"
+                />
+            </form> 
+        </Popup>
+    </>
+}
+
 export function ChatLayout(props: RouteSectionProps<unknown>) {
     const [chatI, setChatI] = createSignal(-1);
     const [profileOpen, setProfileOpen] = createSignal(false);
@@ -29,8 +69,8 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
     });
 
     return <div class="grid grid-cols-[1fr_4fr] w-full h-full">
-        <div class="border-r w-full flex flex-col">
-            <a href="/chat/new">New chat</a>
+        <div class="border-r w-full flex flex-col relative">
+            <NewChat />
             <Index each={chats()}>{(_, i) => <ChatEntry id={i} />}</Index>
         </div>
         <div>
@@ -46,9 +86,9 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
             {props.children}
         </div>
         <Popup show={profileOpen()} onClose={() => setProfileOpen(false)}>
-            <h1 class="text-2xl">
+            <p class="text-2xl text-center">
                 {chats()[chatI()].profileLocalName}
-            </h1>
+            </p>
             <br />
             <p>Peer identifier: {chats()[chatI()].peerId}</p>
             <label>Name: </label>
