@@ -66,6 +66,7 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
     const [showAll, setShowAll] = createSignal(1);
     const params = useParams();
     const navigate = useNavigate();
+    let prevWidth = 0;
 
     createEffect(() => {
         const i = chats().findIndex(v => v.peerId === params.id);
@@ -73,11 +74,16 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         setChatI(i);
     });
 
-    // We check for the screen dimensions every half-second to properly update
+    // We check for the screen dimensions 8 times a second to properly update
     // the layout if necessary.
     // TODO: Implement a better way to do this (CSS)
     setInterval(() => {
         const {innerWidth: width} = window;
+
+        if (prevWidth === width)
+            return;
+
+        prevWidth = width;
 
         if (width > 900) setShowAll(1);
         else setShowAll(0);
@@ -86,7 +92,7 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         else if (width > 1100) setGrid("2fr_4fr");
         else if (width > 900) setGrid("2fr_3fr");
         else setGrid("1fr");
-    }, 1000 / 2);
+    }, 1000 / 8);
 
     return <div class={`grid grid-cols-[${grid()}] w-full h-full`}>
         <Show when={(params.id && showAll()) || !params.id}>
