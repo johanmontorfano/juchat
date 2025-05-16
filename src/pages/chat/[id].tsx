@@ -1,5 +1,5 @@
 import { useParams } from "@solidjs/router";
-import { createSignal, For } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import { chatEvent, saveChat } from "../../p2p/chats";
 import { chats, onConnection, peer, setChats } from "../../p2p/local";
 
@@ -17,27 +17,32 @@ function Bubble(props: { from: "local" | "remote", content: string }) {
 export function Chat() {
     const [content, setContent] = createSignal("");
     const params = useParams();
-    const i = chats().findIndex(v => v.peerId === params.id);
+    const [i, setI] = createSignal(0);
 
+    setI(chats().findIndex(v => v.peerId === params.id));
     setTimeout(() => {
-        if (!chats()[i].conn)
-            onConnection(peer.connect(chats()[i].peerId));
+        if (!chats()[i()].conn)
+            onConnection(peer.connect(chats()[i()].peerId));
     }, 500);
 
     function onSubmit(ev: SubmitEvent) {
         ev.preventDefault();
         setChats(p => {
-            p[i].chatHistory.push({ from: "local", content: content() });
+            p[i()].chatHistory.push({ from: "local", content: content() });
             return [...p];
         });
-        saveChat(chats()[i]);
-        chats()[i].conn.send(chatEvent("message", content()));
+        saveChat(chats()[i()]);
+        chats()[i()].conn.send(chatEvent("message", content()));
         setContent("");
     }
 
+    createEffect(() => {
+        setI(chats().findIndex(v => v.peerId === params.id));
+    });
+
     return <div>
         <div>
-            <For each={chats()[i].chatHistory} children={Bubble} />
+            <For each={chats()[i()].chatHistory} children={Bubble} />
         </div>
         <div class="absolute bottom-0 w-[80%] flex justify-center">
             <form onSubmit={onSubmit} class="p-4 w-[90%]">
@@ -46,12 +51,12 @@ export function Chat() {
                     onChange={ev => setContent(ev.target.value)}
                     placeholder="Write your message"
                     class="custom-input submit-side w-[90%]"
-                    disabled={!chats()[i].isConnected}
+                    disabled={!chats()[i()].isConnected}
                 />
                 <input type="submit"
                     value="send"
                     class="custom-input submit-side w-[10%]"
-                    disabled={!chats()[i].isConnected}
+                    disabled={!chats()[i()].isConnected}
                 />
             </form>
         </div>

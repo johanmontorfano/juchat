@@ -26,6 +26,8 @@ export function onConnection(conn: DataConnection) {
 
         const i = chats().findIndex(v => v.peerId === conn.peer);
 
+        console.log("connection");
+
         if (i < 0)
             setChats(p => [...p, retrieveChat(conn)])
         else {
