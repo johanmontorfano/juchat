@@ -60,6 +60,10 @@ function NewChat() {
 export function ChatLayout(props: RouteSectionProps<unknown>) {
     const [chatI, setChatI] = createSignal(-1);
     const [profileOpen, setProfileOpen] = createSignal(false);
+    const [grid, setGrid] = createSignal("1fr_4fr");
+    // If set to 0, will only show a single component of the layout depending
+    // on the current route.
+    const [showAll, setShowAll] = createSignal(1);
     const params = useParams();
     const navigate = useNavigate();
 
@@ -69,25 +73,44 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         setChatI(i);
     });
 
-    return <div class="grid grid-cols-[1fr_4fr] w-full h-full">
-        <div class="border-r w-full flex flex-col relative">
-            <NewChat />
-            <Index each={chats()}>{(_, i) => <ChatEntry id={i} />}</Index>
-        </div>
-        <div>
-            <div class="flex w-full h-[4dvh] border-b justify-center items-center">
-                <Show when={chatI() > -1} fallback="Unnamed chat">
-                    <p class="cursor-pointer"
-                        onClick={() => setProfileOpen(true)}
-                    >
-                        {chats()[chatI()].profileLocalName} -
-                        {chats()[chatI()].isConnected ? " C" : " Not c"}
-                        onnected
-                    </p>
-                </Show>
+    // We check for the screen dimensions every half-second to properly update
+    // the layout if necessary.
+    // TODO: Implement a better way to do this (CSS)
+    setInterval(() => {
+        const {innerWidth: width} = window;
+
+        if (width > 900) setShowAll(1);
+        else setShowAll(0);
+
+        if (width > 1400) setGrid("1fr_4fr");
+        else if (width > 1100) setGrid("2fr_4fr");
+        else if (width > 900) setGrid("2fr_3fr");
+        else setGrid("1fr");
+    }, 1000 / 2);
+
+    return <div class={`grid grid-cols-[${grid()}] w-full h-full`}>
+        <Show when={(params.id && showAll()) || !params.id}>
+            <div class="border-r w-full flex flex-col relative">
+                <NewChat />
+                <Index each={chats()}>{(_, i) => <ChatEntry id={i} />}</Index>
             </div>
+        </Show>
+        <Show when={(!params.id && showAll()) || params.id}>
+            <div>
+                <div class="flex w-full h-[4dvh] border-b justify-center items-center">
+                    <Show when={chatI() > -1} fallback="Unnamed chat">
+                        <p class="cursor-pointer"
+                            onClick={() => setProfileOpen(true)}
+                        >
+                            {chats()[chatI()].profileLocalName} -
+                            {chats()[chatI()].isConnected ? " C" : " Not c"}
+                            onnected
+                        </p>
+                    </Show>
+                </div>
             {props.children}
-        </div>
+            </div>
+        </Show>
         <Popup show={profileOpen()} onClose={() => setProfileOpen(false)}>
             <p class="text-2xl text-center">
                 {chats()[chatI()].profileLocalName}
