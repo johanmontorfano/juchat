@@ -60,6 +60,8 @@ export function onConnection(conn: DataConnection) {
 export function deleteChat(chat: Chats) {
     const i = chats().findIndex(v => v.peerId === chat.peerId);
 
+    if (chat.conn)
+        chat.conn.close();
     localStorage.removeItem("ch:" + chat.peerId);
     setChats(p => {
         p.splice(i, 1);
