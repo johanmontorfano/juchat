@@ -45,4 +45,7 @@ input.custom-input {
         color: white;
         cursor: pointer;
     }
+    &:disabled {
+        filter: grayscale(100%) opacity(30%);
+    }
 }

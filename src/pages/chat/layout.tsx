@@ -79,7 +79,9 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                     <p class="cursor-pointer"
                         onClick={() => setProfileOpen(true)}
                     >
-                        {chats()[chatI()].profileLocalName}
+                        {chats()[chatI()].profileLocalName} -
+                        {chats()[chatI()].isConnected ? " C" : " Not c"}
+                        onnected
                     </p>
                 </Show>
             </div>

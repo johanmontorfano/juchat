@@ -15,7 +15,11 @@ export const [chats, setChats] = createSignal<Chats[]>(
     {equals: false}
 );
 
+(window as any).chats = chats;
+
 export function onConnection(conn: DataConnection) {
+    // Sends a dummy to open the connection
+    conn.send("dummy");
     conn.on("open", () => {
         // If the chat object of this connection is already loaded, we only
         // modify its fields.
@@ -27,9 +31,13 @@ export function onConnection(conn: DataConnection) {
         else {
             chats()[i].conn = conn;
             chats()[i].isConnected = true;
+            setChats(chats());
         }
     });
     conn.on("data", (ev: ChatEvent) => {
+        if ((ev as any) === "dummy")
+            return;
+
         const i = chats().findIndex(v => v.peerId === conn.peer);
 
         if (ev.kind === "message")
@@ -45,6 +53,7 @@ export function onConnection(conn: DataConnection) {
 
         chats()[i].isConnected = false;
         chats()[i].conn = undefined;
+        setChats(chats());
     });
 }
 

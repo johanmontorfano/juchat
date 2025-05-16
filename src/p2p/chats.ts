@@ -1,5 +1,4 @@
 import { DataConnection } from "peerjs";
-import { chats } from "./local";
 
 export interface Chats {
     conn?: DataConnection;
