@@ -1,4 +1,5 @@
 import { DataConnection } from "peerjs";
+import { chats } from "./local";
 
 export interface Chats {
     conn?: DataConnection;
@@ -56,7 +57,9 @@ export function getAllChats(): Chats[] {
 
 /** Will save a chat in local storage and strip away all unecessary content */
 export function saveChat(chat: Chats) {
-    localStorage.setItem("ch:" + chat.conn.peer, JSON.stringify({
+    const id = chat.conn ? chat.conn.peer : chat.peerId;
+
+    localStorage.setItem("ch:" + id, JSON.stringify({
         isConnected: false,
         isEncrypted: false,
         peerId: chat.peerId,
