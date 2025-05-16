@@ -12,7 +12,7 @@ export function Popup(
     return <Show when={props.show}>
         <Portal>
             <div class="popup-container">
-                <div>
+                <div class="p-2">
                     <div class="w-full flex justify-end">
                         <IoCloseOutline onClick={props.onClose}
                             size={32}
