@@ -1,10 +1,12 @@
-import { RouteSectionProps } from "@solidjs/router";
+import { RouteSectionProps, useParams } from "@solidjs/router";
 import { For } from "solid-js";
 import { chats } from "../../p2p/local";
 
 export function ChatLayout(props: RouteSectionProps<unknown>) {
-    return <div>
-        <div>
+    const params = useParams();
+
+    return <div class="grid grid-cols-[1fr_4fr] w-full h-full">
+        <div class="border-r">
             <a href="/chat/new">New chat</a>
             <div>
                 <For each={chats()}>
@@ -15,7 +17,9 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
             </div>
         </div>
         <div>
-            Current chat
+            <div class="w-full h-[4dvh] border-b align-center">
+                {params.id}
+            </div>
             {props.children}
         </div>
     </div>
