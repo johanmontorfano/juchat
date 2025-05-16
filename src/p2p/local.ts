@@ -15,8 +15,6 @@ export const [chats, setChats] = createSignal<Chats[]>(
     {equals: false}
 );
 
-(window as any).chats = chats;
-
 export function onConnection(conn: DataConnection) {
     // Sends a dummy to open the connection
     conn.send("dummy");
@@ -56,6 +54,16 @@ export function onConnection(conn: DataConnection) {
         chats()[i].isConnected = false;
         chats()[i].conn = undefined;
         setChats(chats());
+    });
+}
+
+export function deleteChat(chat: Chats) {
+    const i = chats().findIndex(v => v.peerId === chat.peerId);
+
+    localStorage.removeItem("ch:" + chat.peerId);
+    setChats(p => {
+        p.splice(i, 1);
+        return p;
     });
 }
 

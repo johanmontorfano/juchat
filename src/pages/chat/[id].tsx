@@ -1,4 +1,4 @@
-import { useParams } from "@solidjs/router";
+import { useNavigate, useParams } from "@solidjs/router";
 import { createEffect, createSignal, For } from "solid-js";
 import { chatEvent, saveChat } from "../../p2p/chats";
 import { chats, onConnection, peer, setChats } from "../../p2p/local";
@@ -16,8 +16,9 @@ function Bubble(props: { from: "local" | "remote", content: string }) {
 
 export function Chat() {
     const [content, setContent] = createSignal("");
-    const params = useParams();
     const [i, setI] = createSignal(0);
+    const params = useParams();
+    const navigate = useNavigate();
 
     setI(chats().findIndex(v => v.peerId === params.id));
     setTimeout(() => {
@@ -39,6 +40,9 @@ export function Chat() {
     createEffect(() => {
         setI(chats().findIndex(v => v.peerId === params.id));
     });
+
+    if (i() < 0)
+        navigate("/chat");
 
     return <div>
         <div>

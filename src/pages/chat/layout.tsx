@@ -1,9 +1,9 @@
-import { RouteSectionProps, useParams } from "@solidjs/router";
+import { RouteSectionProps, useNavigate, useParams } from "@solidjs/router";
 import { IoAddOutline } from "solid-icons/io";
 import { createEffect, createSignal, Index, Show } from "solid-js";
 import { Popup } from "../../component/popup";
 import { saveChat } from "../../p2p/chats";
-import { chats, onConnection, peer, setChats } from "../../p2p/local";
+import { chats, deleteChat, onConnection, peer, setChats } from "../../p2p/local";
 
 /// A separate component for chat entries allows to not loose reactivity
 /// when dealing with changes in the chat name/last chat.
@@ -28,11 +28,11 @@ function NewChat() {
     }
 
     return <>
-        <div class="cursor-pointer bg-[blue] p-[12px] rounded-[24px] flex items-center absolute bottom-[10px] right-[10px]"
+        <div class="cursor-pointer bg-[blue] pr-[14px] p-[8px] rounded-[24px] flex items-center absolute bottom-[10px] right-[10px]"
             onClick={() => setShow(true)}
         >
             <IoAddOutline size={24} color="white" />
-            <p class="text-white">New Chat</p>
+            <p class="text-white m-0 p-0">New Chat</p>
         </div>
         <Popup show={show()} onClose={() => setShow(false)}>
             <p class="text-2xl text-center">Create a new chat with someone</p>
@@ -61,6 +61,7 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
     const [chatI, setChatI] = createSignal(-1);
     const [profileOpen, setProfileOpen] = createSignal(false);
     const params = useParams();
+    const navigate = useNavigate();
 
     createEffect(() => {
         const i = chats().findIndex(v => v.peerId === params.id);
@@ -102,6 +103,26 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                     return p;
                 })}
             />
+            <br />
+            <br />
+            <form onSubmit={ev => {
+                const i = chatI();
+
+                ev.preventDefault();
+                navigate("/chat");
+                setProfileOpen(false);
+                // WARN: for some reason doing a timeout to delete a chat
+                // prevents a solidjs crash, its likely due to navigate not
+                // taking effect before the end of the event, therefore
+                // leading to the chat becoming `undefined` for [id] before
+                // we are redirected to `/chat`
+                setTimeout(() => deleteChat(chats()[i]), 500);
+            }} class="flex justify-end w-full">
+                <input type="submit"
+                    value="Delete chat"
+                    class="cursor-pointer bg-[red] p-[8px] rounded-[6px] flex items-center bottom-[10px] text-white"
+                />
+            </form>
         </Popup>
     </div>
 }
