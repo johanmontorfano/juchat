@@ -1,5 +1,5 @@
 import { RouteSectionProps, useNavigate, useParams } from "@solidjs/router";
-import { IoAddOutline } from "solid-icons/io";
+import { IoAddOutline, IoClose } from "solid-icons/io";
 import { createEffect, createSignal, Index, Show } from "solid-js";
 import { Popup } from "../../component/popup";
 import { saveChat } from "../../p2p/chats";
@@ -103,8 +103,9 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         </Show>
         <Show when={(!params.id && showAll()) || params.id}>
             <div>
-                <div class="flex w-full h-[4dvh] border-b justify-center items-center">
+                <div class="flex w-full h-[4dvh] border-b justify-between items-center">
                     <Show when={chatI() > -1} fallback="Unnamed chat">
+                        <div />
                         <p class="cursor-pointer"
                             onClick={() => setProfileOpen(true)}
                         >
@@ -112,6 +113,10 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                             {chats()[chatI()].isConnected ? " C" : " Not c"}
                             onnected
                         </p>
+                        <IoClose onClick={() => navigate("/chat")}
+                            size={28}
+                            class="cursor-pointer mr-[12px]"
+                        />
                     </Show>
                 </div>
             {props.children}
