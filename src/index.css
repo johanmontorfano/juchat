@@ -27,7 +27,7 @@ body {
 
 .popup-container > div {
     background: white;
-    min-width: 500px;
+    min-width: 200px;
     border-radius: 5px;
 }
 
