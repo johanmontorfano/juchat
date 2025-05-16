@@ -9,15 +9,12 @@ export function Chat() {
     const i = chats().findIndex(v => v.peerId === params.id);
 
     setTimeout(() => {
-        if (!chats()[i].conn) {
-            console.log("connect");
+        if (!chats()[i].conn)
             onConnection(peer.connect(chats()[i].peerId));
-        }
     }, 500);
 
     function onSubmit(ev: SubmitEvent) {
         ev.preventDefault();
-        console.log(chats());
         setChats(p => {
             p[i].chatHistory.push({ from: "local", content: content() });
             return [...p];
