@@ -105,7 +105,7 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
 
     return <div class={`grid grid-cols-[${grid()}] w-full h-full`}>
         <Show when={(params.id && showAll()) || !params.id}>
-            <div class="border-r w-full flex flex-col relative">
+            <div class={`${showAll() ? "border-r" : ""} w-full flex flex-col relative`}>
                 <NewChat />
                 <Index each={chats()} fallback={NoChatTip}>
                     {(_, i) => <ChatEntry id={i} />}
