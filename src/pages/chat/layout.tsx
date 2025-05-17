@@ -97,10 +97,8 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         setChatI(i);
     });
 
-    // We check for the screen dimensions 8 times a second to properly update
-    // the layout if necessary.
-    // TODO: Implement a better way to do this (CSS)
-    setInterval(() => {
+
+    function computeLayout() {
         const {innerWidth: width} = window;
 
         if (prevWidth === width)
@@ -114,8 +112,14 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         if (width > 1400) setGrid("1fr_4fr");
         else if (width > 1100) setGrid("2fr_4fr");
         else if (width > 900) setGrid("2fr_3fr");
-        else setGrid("1fr");
-    }, 1000 / 8);
+        else setGrid("1fr");   
+    }
+
+    computeLayout();
+    // We check for the screen dimensions 8 times a second to properly update
+    // the layout if necessary.
+    // TODO: Implement a better way to do this (CSS)
+    setInterval(() => computeLayout(), 1000 / 8);
 
     return <div class={`grid grid-cols-[${grid()}] w-full h-full`}>
         <Show when={(params.id && showAll()) || !params.id}>
