@@ -38,7 +38,7 @@ function NewChat() {
         <Popup show={show()} onClose={() => setShow(false)}>
             <p class="text-2xl text-center">Create a new chat with someone</p>
             <p class="p-4">
-                Let someone scan this QR code, so they can intiate a
+                Let someone scan this QR code, so they can initiate a
                 connection themselves
             </p>
             <div class="w-full flex justify-center items-center">
@@ -159,6 +159,7 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                     saveChat(p[chatI()]);
                     return p;
                 })}
+                class="custom-input"
             />
             <br />
             <br />
