@@ -5,8 +5,10 @@ export function LinkOnboarding() {
     const params = useParams();
     const navigate = useNavigate();
 
-    onConnection(peer.connect(params.id));
-    navigate("/chat/" + params.id);
+    setTimeout(() => {
+        onConnection(peer.connect(params.id));
+        navigate("/chat/" + params.id);
+    }, 500);
 
     return "Linking...";
 }
