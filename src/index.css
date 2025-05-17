@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 body {
     margin: 0;
@@ -8,7 +11,7 @@ body {
 }
 
 *[data-active=true] {
-    background: blue;
+    @apply bg-blue-500;
     color: white;
 }
 
@@ -26,9 +29,15 @@ body {
 }
 
 .popup-container > div {
-    background: white;
     min-width: 200px;
     border-radius: 5px;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    input.custom-input {
+        @apply bg-gray-800;
+        color: white;
+    }
 }
 
 input.custom-input {
@@ -40,9 +49,9 @@ input.custom-input {
         border-radius: 6px 0px 0px 6px;
     }
     &.submit-side[type=submit] {
+        @apply bg-blue-500;
         border-left: 0px;
         border-radius: 0px 6px 6px 0px;
-        background-color: blue;
         color: white;
         cursor: pointer;
     }

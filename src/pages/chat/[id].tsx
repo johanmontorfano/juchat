@@ -5,7 +5,9 @@ import { chats, onConnection, peer, setChats } from "../../p2p/local";
 
 function Bubble(props: { from: "local" | "remote", content: string }) {
     const local = props.from === "local";
-    const bubble = local ? "bg-blue-500 text-white" : "bg-slate-200";
+    const bubble = local ?
+        "bg-blue-500 text-white dark:bg-blue-600" :
+        "bg-slate-200 dark:bg-gray-500";
 
     return <div class={`flex ${local ? "justify-end" : ""} w-full`}>
         <p class={`p-[4px] m-[4px] min-w-[80px] ${bubble} rounded-[5px]`}>

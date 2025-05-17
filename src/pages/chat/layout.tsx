@@ -28,7 +28,7 @@ function NewChat() {
     }
 
     return <>
-        <div class="cursor-pointer bg-[blue] pr-[14px] p-[8px] rounded-[24px] flex items-center absolute bottom-[10px] right-[10px]"
+        <div class="cursor-pointer bg-blue-500 pr-[14px] p-[8px] rounded-[24px] flex items-center absolute bottom-[10px] right-[10px]"
             onClick={() => setShow(true)}
         >
             <IoAddOutline size={24} color="white" />

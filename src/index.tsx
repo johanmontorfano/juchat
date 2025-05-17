@@ -11,6 +11,13 @@ import { ChatIndex } from './pages/chat';
 import { Chat } from './pages/chat/[id]';
 import { ChatNew } from './pages/chat/new';
 
+const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
+
+document.body.setAttribute("data-theme", darkMode.matches ? "dark" : "light");
+darkMode.addEventListener("change", ev => {
+    document.body.setAttribute("data-theme", ev.matches ? "dark" : "light");
+});
+
 render(
     () => <Router root={RootLayout}>
         <Route path="/" component={Index} />
