@@ -26,6 +26,7 @@ function NewChat() {
     function onSubmit(ev: SubmitEvent) {
         ev.preventDefault();
         onConnection(peer.connect(targetId()));
+        setTargetId("");
     }
 
     return <>
@@ -37,7 +38,8 @@ function NewChat() {
         </div>
         <Popup show={show()} onClose={() => setShow(false)}>
             <p class="text-2xl text-center">Create a new chat with someone</p>
-            <p class="p-4">
+            <p class="text-gray-500 p-4 text-center">Your ID is {peer.id}</p>
+            <p class="p-4 text-center">
                 Let someone scan this QR code, so they can initiate a
                 connection themselves
             </p>
@@ -48,7 +50,7 @@ function NewChat() {
             </div>
             <br />
             <hr class="w-[80%] ml-[10%]" />
-            <p class="p-4">
+            <p class="p-4 text-center">
                 Copy the identifier of this person in the box below to
                 initiate a connection
             </p>
