@@ -19,8 +19,10 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.15.1",
+    "@types/qrcode": "^1.5.5",
     "@types/uuid": "^10.0.0",
     "peerjs": "^1.5.4",
+    "qrcode": "^1.5.4",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.9.5",
     "uuid": "^11.1.0"
