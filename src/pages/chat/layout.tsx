@@ -2,6 +2,7 @@ import { RouteSectionProps, useNavigate, useParams } from "@solidjs/router";
 import { IoAddOutline, IoChatbubblesOutline, IoClose } from "solid-icons/io";
 import { createEffect, createSignal, Index, Show } from "solid-js";
 import { Popup } from "../../component/popup";
+import { QRCode } from "../../component/qrcode";
 import { saveChat } from "../../p2p/chats";
 import { chats, deleteChat, onConnection, peer, setChats } from "../../p2p/local";
 
@@ -36,6 +37,17 @@ function NewChat() {
         </div>
         <Popup show={show()} onClose={() => setShow(false)}>
             <p class="text-2xl text-center">Create a new chat with someone</p>
+            <p class="p-4">
+                Let someone scan this QR code, so they can intiate a
+                connection themselves
+            </p>
+            <div class="w-full flex justify-center items-center">
+                <QRCode value={`${window.location.origin}/c/${peer.id}`}
+                    size={160}
+                />
+            </div>
+            <br />
+            <hr class="w-[80%] ml-[10%]" />
             <p class="p-4">
                 Copy the identifier of this person in the box below to
                 initiate a connection
