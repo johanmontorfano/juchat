@@ -59,3 +59,20 @@ input.custom-input {
         filter: grayscale(100%) opacity(30%);
     }
 }
+
+nav > a {
+    @apply p-2;
+    @apply rounded-[6px];
+    @apply text-lg;
+    transition: all .2s ease;
+
+    &.active {
+        @apply font-black;
+    }
+
+    &:hover {
+        @apply font-bold;
+        @apply bg-gray-200;
+        @apply dark:bg-gray-500;
+    }
+}
