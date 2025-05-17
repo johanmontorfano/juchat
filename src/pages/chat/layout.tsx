@@ -114,22 +114,22 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
         </Show>
         <Show when={(!params.id && showAll()) || params.id}>
             <div>
-                <div class="flex w-full h-[4dvh] border-b justify-between items-center">
-                    <Show when={chatI() > -1} fallback="Unnamed chat">
-                        <div />
-                        <p class="cursor-pointer"
-                            onClick={() => setProfileOpen(true)}
-                        >
-                            {chats()[chatI()].profileLocalName} -
-                            {chats()[chatI()].isConnected ? " C" : " Not c"}
-                            onnected
-                        </p>
-                        <IoClose onClick={() => navigate("/chat")}
-                            size={28}
-                            class="cursor-pointer mr-[12px]"
-                        />
-                    </Show>
-                </div>
+                <Show when={chatI() > -1}>
+                    <div class="flex w-full h-[4dvh] border-b justify-between items-center">
+                            <div />
+                            <p class="cursor-pointer"
+                                onClick={() => setProfileOpen(true)}
+                            >
+                                {chats()[chatI()].profileLocalName} -
+                                {chats()[chatI()].isConnected ? " C" : " Not c"}
+                                onnected
+                            </p>
+                            <IoClose onClick={() => navigate("/chat")}
+                                size={28}
+                                class="cursor-pointer mr-[12px]"
+                            />
+                    </div>
+                </Show>
             {props.children}
             </div>
         </Show>
