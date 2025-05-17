@@ -1,41 +1,40 @@
-## Usage
+**Ju Chat is a P2P chat app, it ensures full privacy and data ownership.**
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+### Features
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+To make this a production grade chat app, some features needs to be included.
+Among those, supplementary security features are needed to avoid being hacked
+on a decentralized network with no authority.
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+- Messages with text and medias
+- Pairing with anyone easily
+- Rich-text chatting with reactions and deleting messages
+- Cryptographic security to ensure integrity of pairs against spoofing
+- Background service to always listen for incoming messages and notifications
 
-## Exploring the template
+### Roadmap
 
-This template's goal is to showcase the routing features of Solid.
-It also showcase how the router and Suspense work together to parallelize data fetching tied to a route via the `.data.ts` pattern.
+- [x] Pairing system
+    - [x] Unsafe pairing
+    - [ ] Safe pairing with key-pairs for identity verification
+- [x] Chatting
+    - [x] Sending texts
+    - [ ] Rich-text messaging support
+    - [ ] Media sharing
+    - [ ] Reactions
+    - [ ] Deleting messages
+- [x] Profile
+    - [x] Easy ID sharing through QR codes
+    - [ ] Transfer/Clone profile on other devices for continuity
 
-You can learn more about it on the [`@solidjs/router` repository](https://github.com/solidjs/solid-router)
+### Profile protection
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+Profile protection through identity verification ensures every pair of the
+network that a user is still the same as the user they paired with. This does
+not prevent someone from spoofing someone else identity, but it prevents
+already existing chats from being spoofed by a evil someone.
 
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm run dev` or `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+Therefore profile protection will generate a public and private key pair when
+initializing an identity, the public key will be shared to any peer that
+connects to them, and each peer will be able to send challenges to connections
+when opened to determine if the identity of someone has been spoofed.
