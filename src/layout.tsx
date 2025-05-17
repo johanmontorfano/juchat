@@ -32,7 +32,7 @@ export function RootLayout(props: RouteSectionProps<unknown>) {
             <img src="/assets/logo.png" width={64} height={64} />
             <nav class="hidden md:inline">
                 <A activeClass="active" end href="/">Home</A>
-                <A activeClass="active" end href="/chat">Chats</A>
+                <A activeClass="active" href="/chat">Chats</A>
             </nav>
             <div>
                 <IoPersonOutline size={24}
@@ -51,7 +51,7 @@ export function RootLayout(props: RouteSectionProps<unknown>) {
                 <p class="italic">Go to</p>
                 <nav class="flex flex-col border rounded-[6px]">
                     <A activeClass="active" end href="/">Home</A>
-                    <A activeClass="active" end href="/chat">Chats</A>
+                    <A activeClass="active" href="/chat">Chats</A>
                 </nav>
             </div>
             <br />
