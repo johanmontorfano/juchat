@@ -2,15 +2,18 @@ import { DataConnection } from "peerjs";
 
 export interface Chats {
     conn?: DataConnection;
+    publicKey?: JsonWebKey;
     peerId: string;
     isConnected: boolean;
-    isEncrypted: false;
+    isAuthenticated: boolean;
     chatHistory: {from: "local" | "remote", content: string}[];
     profileLocalName: string;
 }
 
+export type ChatEventKind = "message" | "challenge" | "challenge_answer";
+
 export interface ChatEvent {
-    kind: "message",
+    kind: ChatEventKind,
     payload: string
 }
 
@@ -22,7 +25,7 @@ export function retrieveChat(from: DataConnection): Chats {
     if (chat === null) {
         localStorage.setItem("ch:" + id, JSON.stringify({
             isConnected: false,
-            isEncrypted: false,
+            isAuthenticated: false,
             chatHistory: [],
             peerId: from.peer,
             profileLocalName: "new chat"
@@ -38,7 +41,7 @@ export function retrieveChat(from: DataConnection): Chats {
 }
 
 /** Will format a chat event */
-export function chatEvent(kind: "message", content: string): ChatEvent {
+export function chatEvent(kind: ChatEventKind, content: string): ChatEvent {
     return { kind, payload: content }
 }
 
@@ -60,7 +63,8 @@ export function saveChat(chat: Chats) {
 
     localStorage.setItem("ch:" + id, JSON.stringify({
         isConnected: false,
-        isEncrypted: false,
+        isAuthenticated: false,
+        publicKey: chat.publicKey,
         peerId: chat.peerId,
         chatHistory: chat.chatHistory,
         profileLocalName: chat.profileLocalName

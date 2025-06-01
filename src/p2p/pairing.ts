@@ -2,23 +2,21 @@ import { DataConnection } from "peerjs";
 import { ChatEvent, chatEvent, Chats } from "./chats";
 
 export interface SafePairingConfig {
-    publicKey: string;
-    privateKey: string;
+    publicKey: JsonWebKey;
+    privateKey: JsonWebKey;
 }
 
-async function exportKey(key: CryptoKey): Promise<string> {
-    const out = await crypto.subtle.exportKey("raw", key);
-
-    return new Uint8Array(out).toString();
+async function exportKey(key: CryptoKey): Promise<JsonWebKey> {
+    return await window.crypto.subtle.exportKey("jwk", key);
 }
 
-async function importKey(key: string, encrypt = false): Promise<CryptoKey> {
+async function importKey(key: JsonWebKey, encrypt = false): Promise<CryptoKey> {
     return await crypto.subtle.importKey(
-        "raw", key as any, "RSA-OAEP", true, [encrypt ? "encrypt" : "decrypt"]
+        "jwk", key as any, "RSA-OAEP", true, [encrypt ? "encrypt" : "decrypt"]
     );
 }
 
-export async function encrypt(key: string, data: string): Promise<string> {
+export async function encrypt(key: JsonWebKey, data: string): Promise<string> {
     const _key = await importKey(key, true);
     const out = await crypto.subtle.encrypt(
         {name: "RSA-OAEP"}, _key, new TextEncoder().encode(data)
@@ -27,7 +25,7 @@ export async function encrypt(key: string, data: string): Promise<string> {
     return btoa(String.fromCharCode(...new Uint8Array(out)));
 }
 
-export async function decrypt(key: string, data: string): Promise<string> {
+export async function decrypt(key: JsonWebKey, data: string): Promise<string> {
     const _key = await importKey(key);
     const out = await crypto.subtle.decrypt(
         {name: "RSA-OAEP"}, _key, new TextEncoder().encode(data)
@@ -38,14 +36,16 @@ export async function decrypt(key: string, data: string): Promise<string> {
 
 /** Will load the local configuration of safe pairing from local storage, or
 * create a new one if none exists */
-async function initSafePairing(): Promise<SafePairingConfig> {
+export async function initSafePairing(): Promise<SafePairingConfig> {
     const config = localStorage.getItem("safepair");
+
+    console.log(config);
 
     if (!config) {
         const pair = await crypto.subtle.generateKey(
             {
                 name: "RSA-OAEP",
-                modulusLength: 4096,
+                modulusLength: 2048,
                 publicExponent: new Uint8Array([1, 0, 1]),
                 hash: "SHA-256"
             },
@@ -53,10 +53,14 @@ async function initSafePairing(): Promise<SafePairingConfig> {
             ["encrypt", "decrypt"]
         );
 
-        return {
+        const out = {
             publicKey: await exportKey(pair.publicKey),
             privateKey: await exportKey(pair.privateKey)
         }
+
+        localStorage.setItem("safepair", JSON.stringify(out));
+
+        return out;
     }
 
     return JSON.parse(config);
@@ -64,24 +68,17 @@ async function initSafePairing(): Promise<SafePairingConfig> {
 
 /** Add a middleware to connections to automatically send challenge answers
 * when received */
-export function identityMiddleware(to: Chats) {
-    const conn = to.conn;
-
-    if (!to.conn || !to.publicKey)
+export async function idMiddleware(conn: DataConnection, data: ChatEvent) {
+    if (data.kind !== "challenge")
         return;
 
-    conn.once("data", async (data: ChatEvent) => {
-        if (data.kind !== "challenge")
-            return;
+    const challenge = data.payload;
+    const config = await initSafePairing();
 
-        const challenge = data.payload;
-        const config = await initSafePairing();
-
-        conn.send(chatEvent(
-            "challenge_answer",
-            await decrypt(config.privateKey, challenge)
-        ))
-    });
+    conn.send(chatEvent(
+        "challenge_answer",
+        await decrypt(config.privateKey, challenge)
+    ));
 }
 
 /** Safe-pairing allows to check pairs are not spoofing someone else identity
@@ -103,7 +100,7 @@ export async function checkIdentity(to: Chats) {
     if (!to.conn || !to.publicKey)
         return;
 
-    conn.once("data", async (data: ChatEvent) => {
+    conn.on("data", async (data: ChatEvent) => {
        to.isAuthenticated = data.kind === "challenge_answer" &&
            parseInt(data.payload) === challenge;
     });

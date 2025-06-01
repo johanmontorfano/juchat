@@ -2,6 +2,7 @@ import Peer, { DataConnection } from "peerjs";
 import { createSignal } from "solid-js";
 import { v6 } from "uuid";
 import { ChatEvent, Chats, getAllChats, retrieveChat, saveChat } from "./chats";
+import { checkIdentity, idMiddleware, initSafePairing } from "./pairing";
 
 // INFO: Peers are meant to always have the same id, therefore a static uuid
 // is given to each peer.
@@ -15,9 +16,9 @@ export const [chats, setChats] = createSignal<Chats[]>(
     {equals: false}
 );
 
-export function onConnection(conn: DataConnection) {
-    // Sends a dummy to open the connection
-    conn.send("dummy");
+export async function onConnection(conn: DataConnection) {
+    // Send the local public key to open the connection.
+    conn.send("pk:" + (await initSafePairing()).publicKey);
     conn.on("open", () => {
         // If the chat object of this connection is already loaded, we only
         // modify its fields.
@@ -33,14 +34,18 @@ export function onConnection(conn: DataConnection) {
             chats()[i].isConnected = true;
             setChats(chats());
         }
-    });
-    conn.on("data", (ev: ChatEvent) => {
-        if ((ev as any) === "dummy")
-            return;
 
+        // Send a challenge request to verify the connection.
+        checkIdentity(chats()[i]);
+    });
+    conn.on("data", (ev: ChatEvent | string) => {
         const i = chats().findIndex(v => v.peerId === conn.peer);
 
-        if (ev.kind === "message")
+        if (typeof ev === "string" && ev.startsWith("pk:"))
+            chats()[i].publicKey = JSON.parse(ev.slice(3));
+        if (typeof ev === "object" && ev.kind === "challenge")
+            return idMiddleware(conn, ev);
+        if (typeof ev === "object" && ev.kind === "message")
             setChats(p => {
                 p[i].chatHistory.push({ from: "remote", content: ev.payload });
                 return [...p];
