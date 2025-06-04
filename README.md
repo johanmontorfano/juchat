@@ -16,13 +16,14 @@ on a decentralized network with no authority.
 
 - [x] Pairing system
     - [x] Unsafe pairing
-    - [ ] Safe pairing with key-pairs for identity verification
+    - [x] Safe pairing with key-pairs for identity verification
 - [x] Chatting
     - [x] Sending texts
     - [ ] Rich-text messaging support
     - [ ] Media sharing
     - [ ] Reactions
     - [ ] Deleting messages
+    - [ ] Background service for notifications
 - [x] Profile
     - [x] Easy ID sharing through QR codes
     - [ ] Transfer/Clone profile on other devices for continuity
