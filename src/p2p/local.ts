@@ -40,7 +40,7 @@ export async function onConnection(conn: DataConnection) {
         if (typeof ev === "string" && ev.startsWith("pk:")) {
             chats()[i].publicKey = JSON.parse(ev.slice(3));
             // Send a challenge request to verify the connection.
-            checkIdentity(chats()[i]);
+            checkIdentity(chats()[i], () => setChats(chats()));
         }
         if (typeof ev === "object" && ev.kind === "challenge")
             return idMiddleware(conn, ev);

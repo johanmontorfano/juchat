@@ -108,9 +108,12 @@ export async function idMiddleware(conn: DataConnection, data: ChatEvent) {
 * answer to the cryptographic challenge or is wrong, the connection is marked
 * as unsafe.
 *
+* The `update` function is responsible of triggering an update of the signal
+* where the chat is stored.
+*
 * WARN: It does not totally prevent spoofing since an instance will trust the
 * first key-pair given by a specific ID. Therefore denying others. */
-export async function checkIdentity(to: Chats) {
+export async function checkIdentity(to: Chats, update: () => void) {
     const conn = to.conn;
     const challenge = crypto.getRandomValues(new Uint32Array(10))[0];
 
@@ -118,8 +121,10 @@ export async function checkIdentity(to: Chats) {
         return;
 
     conn.on("data", async (data: ChatEvent) => {
-       to.isAuthenticated = data.kind === "challenge_answer" &&
-           parseInt(data.payload) === challenge;
+        if (data.kind === "challenge_answer") {
+            to.isAuthenticated = parseInt(data.payload) === challenge;
+            update();
+        }
     });
 
     conn.send(chatEvent(
