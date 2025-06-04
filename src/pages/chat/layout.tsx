@@ -129,8 +129,6 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                     {(_, i) => <ChatEntry id={i} />}
                 </Index>
             </div>
-        </Show>
-        <Show when={(!params.id && showAll()) || params.id}>
             <div>
                 <Show when={chatI() > -1}>
                     <div class="flex w-full h-[4dvh] border-b justify-between items-center">
@@ -140,7 +138,8 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                             >
                                 {chats()[chatI()].profileLocalName} -
                                 {chats()[chatI()].isConnected ? " C" : " Not c"}
-                                onnected
+                                onnected -
+                                {chats()[chatI()].isAuthenticated ? 1 : 0}
                             </p>
                             <IoClose onClick={() => navigate("/chat")}
                                 size={28}
