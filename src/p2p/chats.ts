@@ -2,7 +2,7 @@ import { DataConnection } from "peerjs";
 
 export interface Chats {
     conn?: DataConnection;
-    publicKey?: JsonWebKey;
+    publicKey?: string;
     peerId: string;
     isConnected: boolean;
     isAuthenticated: boolean;

@@ -17,16 +17,15 @@ export const [chats, setChats] = createSignal<Chats[]>(
 );
 
 export async function onConnection(conn: DataConnection) {
-    // Send the local public key to open the connection.
-    conn.send("pk:" + (await initSafePairing()).publicKey);
-    conn.on("open", () => {
+    // We send a dummy to open the connection.
+    conn.send("dummy");
+    conn.on("open", async () => {
         // If the chat object of this connection is already loaded, we only
         // modify its fields.
-
         const i = chats().findIndex(v => v.peerId === conn.peer);
 
-        console.log("connection");
-
+        // Send the local public key to open the connection.
+        conn.send("pk:" + JSON.stringify((await initSafePairing()).publicKey));
         if (i < 0)
             setChats(p => [...p, retrieveChat(conn)])
         else {
@@ -34,15 +33,15 @@ export async function onConnection(conn: DataConnection) {
             chats()[i].isConnected = true;
             setChats(chats());
         }
-
-        // Send a challenge request to verify the connection.
-        checkIdentity(chats()[i]);
     });
     conn.on("data", (ev: ChatEvent | string) => {
         const i = chats().findIndex(v => v.peerId === conn.peer);
 
-        if (typeof ev === "string" && ev.startsWith("pk:"))
+        if (typeof ev === "string" && ev.startsWith("pk:")) {
             chats()[i].publicKey = JSON.parse(ev.slice(3));
+            // Send a challenge request to verify the connection.
+            checkIdentity(chats()[i]);
+        }
         if (typeof ev === "object" && ev.kind === "challenge")
             return idMiddleware(conn, ev);
         if (typeof ev === "object" && ev.kind === "message")

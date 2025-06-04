@@ -2,44 +2,61 @@ import { DataConnection } from "peerjs";
 import { ChatEvent, chatEvent, Chats } from "./chats";
 
 export interface SafePairingConfig {
-    publicKey: JsonWebKey;
-    privateKey: JsonWebKey;
+    publicKey: string;
+    privateKey: string;
 }
 
-async function exportKey(key: CryptoKey): Promise<JsonWebKey> {
-    return await window.crypto.subtle.exportKey("jwk", key);
+// `spki` exports public keys
+// `pkcs8` exports private keys
+async function exportKey(
+    format: "pkcs8" | "spki",
+    key: CryptoKey
+): Promise<string> {
+    const _key = await window.crypto.subtle.exportKey(format, key);
+    const buffer = new Uint8Array(_key);
+
+    return btoa(buffer.reduce((p, b) => p + String.fromCharCode(b), ""));
+
 }
 
-async function importKey(key: JsonWebKey, encrypt = false): Promise<CryptoKey> {
+async function importKey(key: string, encrypt = false): Promise<CryptoKey> {
+    const from = atob(key);
+    const buffer = new Uint8Array(from.length);
+    const format = encrypt ? "spki" : "pkcs8";
+    const usage = encrypt ? "encrypt" : "decrypt";
+
+    buffer.set(from.split("").map(f => f.charCodeAt(0)));
     return await crypto.subtle.importKey(
-        "jwk", key as any, "RSA-OAEP", true, [encrypt ? "encrypt" : "decrypt"]
+        format, buffer.buffer, {
+            name: "RSA-OAEP",
+            hash: "SHA-256"
+        }, true, [usage]
     );
 }
 
-export async function encrypt(key: JsonWebKey, data: string): Promise<string> {
+export async function encrypt(key: string, data: string): Promise<string> {
     const _key = await importKey(key, true);
-    const out = await crypto.subtle.encrypt(
-        {name: "RSA-OAEP"}, _key, new TextEncoder().encode(data)
-    );
-
+    const buffer = new TextEncoder().encode(data);
+    const out = await crypto.subtle.encrypt({name: "RSA-OAEP"}, _key, buffer);
+    
     return btoa(String.fromCharCode(...new Uint8Array(out)));
 }
 
-export async function decrypt(key: JsonWebKey, data: string): Promise<string> {
-    const _key = await importKey(key);
-    const out = await crypto.subtle.decrypt(
-        {name: "RSA-OAEP"}, _key, new TextEncoder().encode(data)
-    );
+export async function decrypt(key: string, data: string): Promise<string> {
+    const _key = await importKey(key, false);
+    const binary = atob(data);
+    const buffer = new Uint8Array(binary.length);
 
-    return btoa(String.fromCharCode(...new Uint8Array(out)));
+    buffer.set(binary.split("").map(c => c.charCodeAt(0)));
+    return new TextDecoder().decode(await crypto.subtle.decrypt(
+        {name: "RSA-OAEP"}, _key, buffer.buffer
+    ));
 }
 
 /** Will load the local configuration of safe pairing from local storage, or
 * create a new one if none exists */
 export async function initSafePairing(): Promise<SafePairingConfig> {
     const config = localStorage.getItem("safepair");
-
-    console.log(config);
 
     if (!config) {
         const pair = await crypto.subtle.generateKey(
@@ -54,8 +71,8 @@ export async function initSafePairing(): Promise<SafePairingConfig> {
         );
 
         const out = {
-            publicKey: await exportKey(pair.publicKey),
-            privateKey: await exportKey(pair.privateKey)
+            publicKey: await exportKey("spki", pair.publicKey),
+            privateKey: await exportKey("pkcs8", pair.privateKey)
         }
 
         localStorage.setItem("safepair", JSON.stringify(out));
@@ -104,6 +121,7 @@ export async function checkIdentity(to: Chats) {
        to.isAuthenticated = data.kind === "challenge_answer" &&
            parseInt(data.payload) === challenge;
     });
+
     conn.send(chatEvent(
         "challenge",
         await encrypt(to.publicKey, challenge.toString())
