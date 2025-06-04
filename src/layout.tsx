@@ -45,7 +45,7 @@ export function RootLayout(props: RouteSectionProps<unknown>) {
             {props.children}
         </div>
         <Popup show={menuOpen()} onClose={() => setMenuOpen(false)}>
-            <p class="text-3xl font-bold">Hello</p>
+            <p class="text-3xl font-bold">Hello there!</p>
             <div class="md:hidden">
                 <br />
                 <p class="italic">Go to</p>
@@ -57,7 +57,7 @@ export function RootLayout(props: RouteSectionProps<unknown>) {
             <br />
             <div class="text-gray-500">
                 <p>Stored content size: {getLocalStorageOccupiedSpace()}</p>
-                <p>Supported secured features: none</p>
+                <p>Features: Pair verification</p>
                 <p>Your ID: {peer.id}</p>
             </div>
         </Popup>
