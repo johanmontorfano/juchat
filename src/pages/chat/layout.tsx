@@ -1,5 +1,5 @@
 import { RouteSectionProps, useNavigate, useParams } from "@solidjs/router";
-import { IoAddOutline, IoChatbubblesOutline, IoClose } from "solid-icons/io";
+import { IoAddOutline, IoChatbubblesOutline, IoClose, IoHelpOutline, IoLockClosed, IoLockOpen } from "solid-icons/io";
 import { createEffect, createSignal, Index, Show } from "solid-js";
 import { Popup } from "../../component/popup";
 import { QRCode } from "../../component/qrcode";
@@ -133,13 +133,18 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
                 <Show when={chatI() > -1}>
                     <div class="flex w-full h-[4dvh] border-b justify-between items-center">
                             <div />
-                            <p class="cursor-pointer"
+                            <p class="cursor-pointer flex align-center"
                                 onClick={() => setProfileOpen(true)}
                             >
-                                {chats()[chatI()].profileLocalName} -
-                                {chats()[chatI()].isConnected ? " C" : " Not c"}
-                                onnected -
-                                {chats()[chatI()].isAuthenticated ? 1 : 0}
+                                {
+                                    chats()[chatI()].isConnected ?
+                                        chats()[chatI()].isAuthenticated ?
+                                        <IoLockClosed size={20} /> :
+                                        <IoLockOpen size={20} /> :
+                                    <IoHelpOutline size={20} />
+
+                                }
+                                {chats()[chatI()].profileLocalName}
                             </p>
                             <IoClose onClick={() => navigate("/chat")}
                                 size={28}
@@ -151,22 +156,22 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
             </div>
         </Show>
         <Popup show={profileOpen()} onClose={() => setProfileOpen(false)}>
-            <p class="text-2xl text-center">
-                {chats()[chatI()].profileLocalName}
-            </p>
+            <div class="p-4 w-full flex justify-center">
+                <input type="text"
+                    value={chats()[chatI()].profileLocalName}
+                    onChange={ev => setChats(p => {
+                        p[chatI()].profileLocalName = ev.target.value;
+                        saveChat(p[chatI()]);
+                        return p;
+                    })}
+                    class="custom-input"
+                />
+            </div>
             <br />
             <p>Peer identifier: {chats()[chatI()].peerId}</p>
-            <label>Name: </label>
-            <input type="text"
-                value={chats()[chatI()].profileLocalName}
-                onChange={ev => setChats(p => {
-                    p[chatI()].profileLocalName = ev.target.value;
-                    saveChat(p[chatI()]);
-                    return p;
-                })}
-                class="custom-input"
-            />
-            <br />
+            <p>Status: {chats()[chatI()].isConnected ?
+                "Connected" : "Disconnected"}</p>
+            <p>Verified: {chats()[chatI()].isAuthenticated ? "Yes" : "No"}</p>
             <br />
             <form onSubmit={ev => {
                 const i = chatI();
