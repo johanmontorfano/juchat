@@ -124,35 +124,35 @@ export function ChatLayout(props: RouteSectionProps<unknown>) {
     return <div class={`grid grid-cols-[${grid()}] w-full h-full`}>
         <Show when={(params.id && showAll()) || !params.id}>
             <div class={`${showAll() ? "border-r" : ""} w-full flex flex-col relative`}>
-                <NewChat />
                 <Index each={chats()} fallback={<NoChatTip />}>
                     {(_, i) => <ChatEntry id={i} />}
                 </Index>
+                <NewChat />
             </div>
+        </Show>
+        <Show when={chatI() > -1 || showAll()}>
             <div>
                 <Show when={chatI() > -1}>
                     <div class="flex w-full h-[4dvh] border-b justify-between items-center">
-                            <div />
-                            <p class="cursor-pointer flex align-center"
-                                onClick={() => setProfileOpen(true)}
-                            >
-                                {
-                                    chats()[chatI()].isConnected ?
-                                        chats()[chatI()].isAuthenticated ?
-                                        <IoLockClosed size={20} /> :
-                                        <IoLockOpen size={20} /> :
-                                    <IoHelpOutline size={20} />
-
-                                }
-                                {chats()[chatI()].profileLocalName}
-                            </p>
-                            <IoClose onClick={() => navigate("/chat")}
-                                size={28}
-                                class="cursor-pointer mr-[12px]"
-                            />
+                        <p class="cursor-pointer flex align-center"
+                            onClick={() => setProfileOpen(true)}
+                        >
+                            {
+                                chats()[chatI()].isConnected ?
+                                chats()[chatI()].isAuthenticated ?
+                                    <IoLockClosed size={20} /> :
+                                    <IoLockOpen size={20} /> :
+                                <IoHelpOutline size={20} />
+                            }
+                            {chats()[chatI()].profileLocalName}
+                        </p>
+                        <IoClose onClick={() => navigate("/chat")}
+                            size={28}
+                            class="cursor-pointer mr-[12px]"
+                        />
                     </div>
                 </Show>
-            {props.children}
+                {props.children}
             </div>
         </Show>
         <Popup show={profileOpen()} onClose={() => setProfileOpen(false)}>
