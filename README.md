@@ -23,7 +23,11 @@ on a decentralized network with no authority.
     - [ ] Media sharing
     - [ ] Reactions
     - [ ] Deleting messages
-    - [ ] Background service for notifications
+    - [x] Background service for notifications
+    > [!NOTE]
+    > Due to the nature of the app, there is no way of enabling background
+    > services able to uphold a WebRTC connection. Therefore, this is not
+    > possible unless a native app is developped (with Electron or Tauri)
 - [x] Profile
     - [x] Easy ID sharing through QR codes
     - [ ] Transfer/Clone profile on other devices for continuity
