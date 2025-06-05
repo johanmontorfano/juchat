@@ -13,8 +13,9 @@ export interface Chats {
 export type ChatEventKind = "message" | "challenge" | "challenge_answer";
 
 export interface ChatEvent {
-    kind: ChatEventKind,
-    payload: string
+    kind: ChatEventKind;
+    payload: string[];
+    payload_kind: string[]
 }
 
 /** Will retrieve a chat from local storage according to a peer connection. */
@@ -40,9 +41,18 @@ export function retrieveChat(from: DataConnection): Chats {
     return chatObject;
 }
 
-/** Will format a chat event */
-export function chatEvent(kind: ChatEventKind, content: string): ChatEvent {
-    return { kind, payload: content }
+/** Will format a chat event. Those are formatted as a content string
+ * array with unspecified kinds. Kinds can be specified in the third parameter
+ * with kind[i] being linked to content[i].
+ * 
+ * Here are the possible kinds of contents: text, image:[format],
+ * audio:[format], file:[format]. All formats may not be implemented. */
+export function chatEvent(
+    kind: ChatEventKind,
+    content: string[],
+    content_kind: string[]
+): ChatEvent {
+    return { kind, payload: content, payload_kind: content_kind };
 }
 
 /** This function should not be called after first initialization since it
