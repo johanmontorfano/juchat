@@ -6,7 +6,11 @@ export interface Chats {
     peerId: string;
     isConnected: boolean;
     isAuthenticated: boolean;
-    chatHistory: {from: "local" | "remote", content: string}[];
+    chatHistory: {
+        from: "local" | "remote",
+        content: string[],
+        content_kind: string[]
+    }[];
     profileLocalName: string;
 }
 
