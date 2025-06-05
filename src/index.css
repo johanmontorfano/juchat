@@ -34,19 +34,23 @@ body {
 }
 
 @media screen and (prefers-color-scheme: dark) {
-    input.custom-input {
+    .custom-input {
         @apply bg-gray-800;
         color: white;
     }
 }
 
-input.custom-input {
+.custom-input {
     border: 1px solid lightgray;
     padding: 8px;
     transition: all .2s ease;
     
     &.submit-side:not([type=submit]) {
         border-radius: 6px 0px 0px 6px;
+    }
+    &.center-side {
+        border-left: 0px;
+        cursor: pointer;
     }
     &.submit-side[type=submit] {
         @apply bg-blue-500;
