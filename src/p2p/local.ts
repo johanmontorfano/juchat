@@ -46,7 +46,11 @@ export async function onConnection(conn: DataConnection) {
             return idMiddleware(conn, ev);
         if (typeof ev === "object" && ev.kind === "message")
             setChats(p => {
-                p[i].chatHistory.push({ from: "remote", content: ev.payload });
+                p[i].chatHistory.push({
+                    from: "remote",
+                    content: ev.payload,
+                    content_kind: ev.payload_kind
+                });
                 return [...p];
             });
         saveChat(chats()[i]);
