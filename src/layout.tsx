@@ -60,6 +60,15 @@ export function RootLayout(props: RouteSectionProps<unknown>) {
                 <p>Features: Pair verification</p>
                 <p>Your ID: {peer.id}</p>
             </div>
+            <br />
+            <div class="custom-input rounded-md bg-red-500 text-white text-center cursor-pointer"
+                onClick={() => {
+                    localStorage.clear();
+                    window.location.assign("/");
+                }}
+            >
+                Reset app
+            </div>
         </Popup>
     </div>
 }
