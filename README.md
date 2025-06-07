@@ -19,11 +19,11 @@ on a decentralized network with no authority.
     - [x] Safe pairing with key-pairs for identity verification
 - [x] Chatting
     - [x] Sending texts
-    - [ ] Rich-text messaging support
-    - [ ] Media sharing
+    - [x] Rich-text messaging support
+    - [x] Media sharing
     - [ ] Reactions
     - [ ] Deleting messages
-    - [x] Background service for notifications
+    - [ ] ~Background service for notifications~
     > [!NOTE]
     > Due to the nature of the app, there is no way of enabling background
     > services able to uphold a WebRTC connection. Therefore, this is not
