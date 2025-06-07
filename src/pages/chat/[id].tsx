@@ -140,6 +140,10 @@ export function Chat() {
 
                     }}
                 />
+                <input type="submit"
+                    hidden="hidden" 
+                    disabled={!chats()[i()].isConnected}
+                />
                 <button class="custom-input center-side w-[40px] shadow-xl p-0"
                     disabled={!chats()[i()].isConnected}
                     onClick={ev => {
