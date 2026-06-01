@@ -26,6 +26,6 @@
     "solid-icons": "^1.1.0",
     "solid-js": "^1.9.5",
     "solid-spinner": "^0.2.0",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   }
 }
